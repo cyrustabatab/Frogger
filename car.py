@@ -56,7 +56,7 @@ class Car(pygame.sprite.Sprite):
 
         self.direction = direction_mapping[lane]
 
-
+        self.screen_width = screen_width
         
 
 
@@ -76,8 +76,12 @@ class Car(pygame.sprite.Sprite):
         
         if self.direction == LEFT:
             self.rect.x -= self.speed
+            if self.rect.right <= 0:
+                self.kill()
         else:
             self.rect.x += self.speed
+            if self.rect.left >= self.screen_width:
+                self.kill()
 
 
 

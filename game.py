@@ -30,7 +30,7 @@ ADD_CAR = pygame.USEREVENT + 1
 
 #pygame.time.set_timer(ADD_CAR,1000)
 
-possible_gaps = (1.5,2,2.5)
+possible_gaps = (2,2.5,3,3.5,4)
 lane_times = [[time.time(),0] for _ in range(5)]
 
 while True:
@@ -46,7 +46,6 @@ while True:
             cars.add(car)
             lane_times[i][0] = current_time
             lane_times[i][1] = random.choice(possible_gaps)
-
 
 
 

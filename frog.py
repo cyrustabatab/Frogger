@@ -91,8 +91,9 @@ class Frog(pygame.sprite.Sprite):
             if not self.moving:
                 self.start_moving_frame = 0
                 self.moving = True
+
             self.start_moving_frame += 1
-            if self.start_moving_frame == 10:
+            if self.start_moving_frame == 5:
                 self.start_moving_frame = 0
                 self.move_index = (self.move_index + 1) % len(self.images)
                 self.image = self.images[self.move_index]
@@ -103,9 +104,9 @@ class Frog(pygame.sprite.Sprite):
     def move_left(self):
         
         if self.direction != self.LEFT:
-            self.image = self.left_images[0]
+            self.image = self.left_images[1]
             self.rect = self.image.get_rect(center=self.rect.center)
-            self.move_index = 0
+            self.move_index = 1
             self.images = self.left_images
             self.direction = self.LEFT
 
@@ -117,9 +118,9 @@ class Frog(pygame.sprite.Sprite):
     def move_up(self):
 
         if self.direction != self.UP:
-            self.image = self.up_images[0]
+            self.image = self.up_images[1]
             self.rect = self.image.get_rect(center=self.rect.center)
-            self.move_index = 0
+            self.move_index = 1
             self.images = self.up_images
             self.direction = self.UP
 
@@ -131,9 +132,9 @@ class Frog(pygame.sprite.Sprite):
     def move_right(self):
         
         if self.direction != self.RIGHT:
-            self.image = self.right_images[0]
+            self.image = self.right_images[1]
             self.rect = self.image.get_rect(center=self.rect.center)
-            self.move_index = 0
+            self.move_index = 1
             self.images = self.right_images
             self.direction = self.RIGHT
 
@@ -146,9 +147,9 @@ class Frog(pygame.sprite.Sprite):
     def move_down(self):
         
         if self.direction != self.DOWN:
-            self.image = self.down_images[0]
+            self.image = self.down_images[1]
             self.rect = self.image.get_rect(center=self.rect.center)
-            self.move_index = 0
+            self.move_index = 1
             self.images = self.down_images
             self.direction = self.DOWN
 

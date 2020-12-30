@@ -28,14 +28,16 @@ y_positions = [350 + 50 * y for y in range(0,5)]
 #cars.add(car)
 
 ADD_CAR = pygame.USEREVENT + 1
+CROAK =pygame.USEREVENT + 2
 
 #pygame.time.set_timer(ADD_CAR,1000)
+pygame.time.set_timer(CROAK,3000)
 
 possible_gaps = (2.5,3,3.5,4)
 lane_times = [[time.time(),0] for _ in range(5)]
 info = Info(screen_width,screen_height)
 
-
+croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
 
 
 def game_over_screen():
@@ -49,6 +51,12 @@ def game_over_screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return
+
+
+
 
         
 
@@ -88,7 +96,9 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             x,y = pygame.mouse.get_pos()
 
-            print(x,y)
+
+        if event.type == CROAK:
+            croak_sound.play()
         #if event.type == ADD_CAR:
         #    car = Car(screen_width)
         #    cars.add(car)
@@ -103,6 +113,8 @@ while True:
         frogger.sprite.lives -= 1
         if frogger.sprite.lives == 0:
             game_over_screen()
+            frogger.sprite.lives = 5
+            info.reset()
     screen.blit(background,(0,0))
     frogger.draw(screen)
     cars.draw(screen)

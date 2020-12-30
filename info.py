@@ -12,6 +12,7 @@ class Info:
     def __init__(self,screen_width,screen_height,lives=5):
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.initial_lives = lives
         self.lives = lives
         left_gap = 5
         gap_between_images = 5
@@ -19,7 +20,8 @@ class Info:
         self.lives_y_coordinate = 2
 
 
-
+    def reset(self):
+        self.lives = self.initial_lives
     
 
     def draw_lives(self,screen):

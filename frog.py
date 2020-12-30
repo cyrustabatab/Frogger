@@ -41,7 +41,7 @@ class Frog(pygame.sprite.Sprite):
     up_images,left_images,right_images,down_images = get_frog_images()
 
 
-    def __init__(self,screen_width,screen_height,speed=2):
+    def __init__(self,screen_width,screen_height,lives=5,speed=2):
     
         super().__init__()
         
@@ -51,13 +51,20 @@ class Frog(pygame.sprite.Sprite):
         self.x = screen_width//2 - self.image.get_width()//2
         self.y = screen_height - self.image.get_height()
         self.rect = self.image.get_rect(topleft=(self.x,self.y))
+        self.lives = lives
         self.speed = speed
         self.moving = False
         self.move_index = 0
         self.direction = self.UP
         self.images = self.up_images
 
-
+    
+    def reset(self):
+        self.rect.x = self.x
+        self.rect.y = self.y
+        self.direction = self.UP
+        self.images = self.up_images
+        self.image = self.up_images[0]
 
     def update(self,keys_pressed):
 

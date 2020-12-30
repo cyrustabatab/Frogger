@@ -11,6 +11,7 @@ FPS = 60
 
 from frog import Frog
 from car import Car
+from info import Info
 
 
 pygame.display.set_caption("FROGGER")
@@ -32,6 +33,31 @@ ADD_CAR = pygame.USEREVENT + 1
 
 possible_gaps = (2,2.5,3,3.5,4)
 lane_times = [[time.time(),0] for _ in range(5)]
+info = Info(screen_width,screen_height)
+
+
+
+
+def game_over_screen():
+    game_over_image = pygame.image.load(os.path.join('assets','game_over.jpg')).convert()
+
+
+
+    while True:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        
+
+        screen.blit(game_over_image,(0,0))
+
+        pygame.display.update()
+
+
+
 
 while True:
     
@@ -42,8 +68,7 @@ while True:
     for i,(lane_time,gap) in enumerate(lane_times):
 
         if current_time - lane_time >= gap:
-            car = Car(i +1,screen_width)
-            cars.add(car)
+            cars.add(Car(i + 1,screen_width))
             lane_times[i][0] = current_time
             lane_times[i][1] = random.choice(possible_gaps)
 
@@ -72,9 +97,16 @@ while True:
     keys_pressed = pygame.key.get_pressed()
     frogger.update(keys_pressed)
     cars.update()
+    if pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
+        info.decrement_life()
+        frogger.sprite.reset()
+        frogger.sprite.lives -= 1
+        if frogger.sprite.lives == 0:
+            game_over_screen()
     screen.blit(background,(0,0))
-    cars.draw(screen)
     frogger.draw(screen)
+    cars.draw(screen)
+    info.draw_lives(screen)
 
     pygame.display.update()
     clock.tick(FPS)

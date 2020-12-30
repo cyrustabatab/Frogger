@@ -51,7 +51,7 @@ class Car(pygame.sprite.Sprite):
 
     left_images,right_images = get_images()
 
-    def __init__(self,lane,screen_width,speed=2):
+    def __init__(self,lane,screen_width,speed=3):
         super().__init__()
 
         self.direction = direction_mapping[lane]

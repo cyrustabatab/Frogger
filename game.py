@@ -31,7 +31,7 @@ ADD_CAR = pygame.USEREVENT + 1
 
 #pygame.time.set_timer(ADD_CAR,1000)
 
-possible_gaps = (2,2.5,3,3.5,4)
+possible_gaps = (2.5,3,3.5,4)
 lane_times = [[time.time(),0] for _ in range(5)]
 info = Info(screen_width,screen_height)
 

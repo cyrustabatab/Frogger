@@ -65,22 +65,32 @@ class Frog(pygame.sprite.Sprite):
         self.direction = self.UP
         self.images = self.up_images
         self.image = self.up_images[0]
+        self.rect = self.image.get_rect(center=self.rect.center)
+    
+
+    @property
+    def in_water(self):
+        
+        top,bottom = 45,297
+        return self.rect.bottom <= bottom and self.rect.top >= top
+
+
 
     def update(self,keys_pressed):
 
         
         moving = False
         if keys_pressed[pygame.K_UP]:
-            self.move_up()
+            self.move_up(self.moving)
             moving = True
         elif keys_pressed[pygame.K_LEFT]:
-            self.move_left()
+            self.move_left(self.moving)
             moving = True
         elif keys_pressed[pygame.K_RIGHT]:
-            self.move_right()
+            self.move_right(self.moving)
             moving = True
         elif keys_pressed[pygame.K_DOWN]:
-            self.move_down()
+            self.move_down(self.moving)
             moving = True
         else:
             if self.moving:
@@ -101,7 +111,7 @@ class Frog(pygame.sprite.Sprite):
 
 
 
-    def move_left(self):
+    def move_left(self,moving):
         
         if self.direction != self.LEFT:
             self.image = self.left_images[1]
@@ -109,13 +119,16 @@ class Frog(pygame.sprite.Sprite):
             self.move_index = 1
             self.images = self.left_images
             self.direction = self.LEFT
-
+        
+        if not moving:
+            self.image = self.images[1]
+            self.rect = self.image.get_rect(center=self.rect.center)
 
         self.rect.x -= self.speed
         if self.rect.left <= 0:
             self.rect.left = 0
 
-    def move_up(self):
+    def move_up(self,moving):
 
         if self.direction != self.UP:
             self.image = self.up_images[1]
@@ -124,12 +137,15 @@ class Frog(pygame.sprite.Sprite):
             self.images = self.up_images
             self.direction = self.UP
 
+        if not moving:
+            self.image = self.images[1]
+            self.rect = self.image.get_rect(center=self.rect.center)
         self.rect.y -= self.speed
         if self.rect.top <= 0:
             self.rect.top = 0
 
 
-    def move_right(self):
+    def move_right(self,moving):
         
         if self.direction != self.RIGHT:
             self.image = self.right_images[1]
@@ -138,13 +154,16 @@ class Frog(pygame.sprite.Sprite):
             self.images = self.right_images
             self.direction = self.RIGHT
 
+        if not moving:
+            self.image = self.images[1]
+            self.rect = self.image.get_rect(center=self.rect.center)
 
         self.rect.x += self.speed
         if self.rect.right >= self.screen_width:
             self.rect.right = self.screen_width
 
 
-    def move_down(self):
+    def move_down(self,moving):
         
         if self.direction != self.DOWN:
             self.image = self.down_images[1]
@@ -153,6 +172,9 @@ class Frog(pygame.sprite.Sprite):
             self.images = self.down_images
             self.direction = self.DOWN
 
+        if not moving:
+            self.image = self.images[1]
+            self.rect = self.image.get_rect(center=self.rect.center)
 
         self.rect.y += self.speed
 

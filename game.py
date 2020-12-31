@@ -1,5 +1,7 @@
 import pygame,sys,os,random,time
 
+
+pygame.mixer.pre_init(44100,-16,2,512)
 pygame.init()
 
 
@@ -38,6 +40,7 @@ lane_times = [[time.time(),0] for _ in range(5)]
 info = Info(screen_width,screen_height)
 
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
+splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
 
 
 def game_over_screen():
@@ -95,6 +98,8 @@ while True:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             x,y = pygame.mouse.get_pos()
+            print(frogger.sprite.in_water)
+
 
 
         if event.type == CROAK:
@@ -108,11 +113,13 @@ while True:
     frogger.update(keys_pressed)
     cars.update()
     if pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
+        splat_sound.play()
         info.decrement_life()
         frogger.sprite.reset()
         frogger.sprite.lives -= 1
         if frogger.sprite.lives == 0:
             game_over_screen()
+            pygame.time.set_timer(CROAK,0)
             frogger.sprite.lives = 5
             info.reset()
     screen.blit(background,(0,0))

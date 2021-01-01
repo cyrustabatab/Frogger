@@ -14,6 +14,7 @@ FPS = 60
 from frog import Frog
 from car import Car
 from info import Info
+from log import Log
 
 
 pygame.display.set_caption("FROGGER")
@@ -36,11 +37,17 @@ CROAK =pygame.USEREVENT + 2
 pygame.time.set_timer(CROAK,3000)
 
 possible_gaps = (2.5,3,3.5,4)
-lane_times = [[time.time(),0] for _ in range(5)]
+log_gaps = (4,5,6)
+lane_times = [[time.time(),0] for _ in range(10)]
 info = Info(screen_width,screen_height)
 
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
 splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
+
+
+logs = pygame.sprite.Group()
+
+
 
 
 def game_over_screen():
@@ -79,9 +86,14 @@ while True:
     for i,(lane_time,gap) in enumerate(lane_times):
 
         if current_time - lane_time >= gap:
-            cars.add(Car(i + 1,screen_width))
+            if i >= 5:
+                cars.add(Car(i + 1 - 5,screen_width))
+                lane_times[i][1] = random.choice(possible_gaps)
+            else:
+                logs.add(Log(i +1,screen_width))
+                lane_times[i][1] = random.choice(log_gaps)
+
             lane_times[i][0] = current_time
-            lane_times[i][1] = random.choice(possible_gaps)
 
 
 
@@ -98,7 +110,8 @@ while True:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
             x,y = pygame.mouse.get_pos()
-            print(frogger.sprite.in_water)
+            print(x,y)
+            #print(frogger.sprite.in_water)
 
 
 
@@ -112,6 +125,7 @@ while True:
     keys_pressed = pygame.key.get_pressed()
     frogger.update(keys_pressed)
     cars.update()
+    logs.update()
     if pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
         splat_sound.play()
         info.decrement_life()
@@ -123,8 +137,9 @@ while True:
             frogger.sprite.lives = 5
             info.reset()
     screen.blit(background,(0,0))
-    frogger.draw(screen)
     cars.draw(screen)
+    logs.draw(screen)
+    frogger.draw(screen)
     info.draw_lives(screen)
 
     pygame.display.update()

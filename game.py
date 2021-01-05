@@ -126,16 +126,32 @@ while True:
     frogger.update(keys_pressed)
     cars.update()
     logs.update()
-    if pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
+    if not frogger.sprite.in_water and pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
         splat_sound.play()
-        info.decrement_life()
-        frogger.sprite.reset()
-        frogger.sprite.lives -= 1
         if frogger.sprite.lives == 0:
             game_over_screen()
             pygame.time.set_timer(CROAK,0)
             frogger.sprite.lives = 5
             info.reset()
+    elif frogger.sprite.in_water:
+        sprites = pygame.sprite.spritecollide(frogger.sprite,logs,collided=pygame.sprite.collide_mask,dokill=False)
+
+        
+        if sprites:
+            sprite = sprites[0]
+
+            if isinstance(sprite,Log):
+                frogger.sprite.place_on_log(sprite)
+        else:
+            info.decrement_life()
+            frogger.sprite.reset()
+            frogger.sprite.lives -= 1
+
+
+
+
+
+
     screen.blit(background,(0,0))
     cars.draw(screen)
     logs.draw(screen)

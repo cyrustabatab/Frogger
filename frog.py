@@ -57,7 +57,13 @@ class Frog(pygame.sprite.Sprite):
         self.move_index = 0
         self.direction = self.UP
         self.images = self.up_images
+        self.on_log = False
+        self.x_speed = None #will have x_speed if on log
+    
 
+    def place_on_log(self,log):
+        self.on_log=True
+        self.x_speed = log.speed
     
     def reset(self):
         self.rect.x = self.x
@@ -79,6 +85,9 @@ class Frog(pygame.sprite.Sprite):
     def update(self,keys_pressed):
 
         
+        if self.on_log:
+            self.rect.x += self.x_speed
+
         moving = False
         if keys_pressed[pygame.K_UP]:
             self.move_up(self.moving)

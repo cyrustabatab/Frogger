@@ -63,7 +63,7 @@ class Frog(pygame.sprite.Sprite):
 
     def place_on_log(self,log):
         self.on_log=True
-        self.x_speed = log.speed
+        self.x_speed = log.speed * log.direction
     
     def reset(self):
         self.rect.x = self.x
@@ -72,6 +72,7 @@ class Frog(pygame.sprite.Sprite):
         self.images = self.up_images
         self.image = self.up_images[0]
         self.rect = self.image.get_rect(center=self.rect.center)
+        self.on_log = False
     
 
     @property

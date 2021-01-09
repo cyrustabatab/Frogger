@@ -15,6 +15,7 @@ from frog import Frog
 from car import Car
 from info import Info
 from log import Log
+from log import Gator
 
 
 pygame.display.set_caption("FROGGER")
@@ -90,7 +91,10 @@ while True:
                 cars.add(Car(i + 1 - 5,screen_width))
                 lane_times[i][1] = random.choice(possible_gaps)
             else:
-                logs.add(Log(i +1,screen_width))
+                if random.randint(1,5) <= 4:
+                    logs.add(Log(i +1,screen_width))
+                else:
+                    logs.add(Gator(i + 1,screen_width))
                 lane_times[i][1] = random.choice(log_gaps)
 
             lane_times[i][0] = current_time

@@ -33,8 +33,10 @@ y_positions = [350 + 50 * y for y in range(0,5)]
 
 ADD_CAR = pygame.USEREVENT + 1
 CROAK =pygame.USEREVENT + 2
+TRILL = pygame.USEREVENT + 3
 
 #pygame.time.set_timer(ADD_CAR,1000)
+pygame.time.set_timer(TRILL,5000)
 pygame.time.set_timer(CROAK,3000)
 
 possible_gaps = (2.5,3,3.5,4)
@@ -44,6 +46,7 @@ info = Info(screen_width,screen_height)
 
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
 splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
+trill_sound = pygame.mixer.Sound(os.path.join('assets','trill.wav'))
 
 
 logs = pygame.sprite.Group()
@@ -76,6 +79,17 @@ def game_over_screen():
         pygame.display.update()
 
 
+
+def reset():
+    splat_sound.play()
+    info.decrement_life()
+    frogger.sprite.reset()
+    frogger.sprite.lives -= 1
+    if frogger.sprite.lives == 0:
+        game_over_screen()
+        pygame.time.set_timer(CROAK,0)
+        frogger.sprite.lives = 5
+        info.reset()
 
 
 while True:
@@ -121,6 +135,10 @@ while True:
 
         if event.type == CROAK:
             croak_sound.play()
+
+
+        if event.type == TRILL:
+            trill_sound.play()
         #if event.type == ADD_CAR:
         #    car = Car(screen_width)
         #    cars.add(car)
@@ -149,6 +167,10 @@ while True:
 
             if isinstance(sprite,Log):
                 frogger.sprite.place_on_log(sprite)
+            else:
+                reset()
+
+
         else:
             info.decrement_life()
             frogger.sprite.reset()

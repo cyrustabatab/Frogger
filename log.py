@@ -69,6 +69,15 @@ class WaterObject(pygame.sprite.Sprite):
         self.rect.x += self.direction * self.speed
 
 
+        if self.direction == LEFT:
+            if self.x <= -self.image.get_width():
+                self.kill()
+        else:
+            if self.x >= self.screen_width:
+                self.kill()
+
+
+
 
 class Gator(WaterObject):
     
@@ -82,39 +91,38 @@ class Gator(WaterObject):
         self.image = self.images[0]
 
         self.rect = self.image.get_rect(topleft=(self.x,self.y))
+        self.frame_count = 0
+        self.image_index = 0
+    
+
+    def update(self):
+
+        super().update()
+        self.frame_count += 1
+        if self.frame_count == 60:
+            self.image_index = (self.image_index + 1) % len(self.images)
+            self.image = self.images[self.image_index]
+            self.frame_count = 0
+
+    
 
 
 
-
-
-class Log(pygame.sprite.Sprite):
+class Log(WaterObject):
     
     
 
     log_images = get_log_images()
     def __init__(self,lane,screen_width,speed=2):
-        super().__init__()
-        self.screen_width = screen_width
+        super().__init__(lane,screen_width,self.log_images,speed)
 
-        self.image = random.choice(self.log_images)
-        self.speed = speed
 
-        self.direction = directions[lane]
-
-        if self.direction == RIGHT:
-            self.x = -10 - self.image.get_width()
-        else:
-            self.x = screen_width + 10
-
-        self.y = y_positions[lane -1]
 
 
         self.rect = self.image.get_rect(topleft=(self.x,self.y))
 
 
-    def update(self):
 
-        self.rect.x += self.direction * self.speed
 
 
 

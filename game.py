@@ -40,13 +40,15 @@ pygame.time.set_timer(TRILL,5000)
 pygame.time.set_timer(CROAK,3000)
 
 possible_gaps = (2.5,3,3.5,4)
-log_gaps = (4,5,6)
+log_gaps =(1,2,3) #(4,5,6)
 lane_times = [[time.time(),0] for _ in range(10)]
 info = Info(screen_width,screen_height)
 
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
 splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
 trill_sound = pygame.mixer.Sound(os.path.join('assets','trill.wav'))
+
+frog_image= pygame.image.load(os.path.join('assets','down_still.png'))
 
 
 logs = pygame.sprite.Group()
@@ -92,6 +94,8 @@ def reset():
         info.reset()
 
 
+score = 0
+locations = []
 while True:
     
     
@@ -148,6 +152,7 @@ while True:
     frogger.update(keys_pressed)
     cars.update()
     logs.update()
+    
     if not frogger.sprite.in_water and pygame.sprite.spritecollideany(frogger.sprite,cars,collided=pygame.sprite.collide_mask):
         splat_sound.play()
         info.decrement_life()
@@ -158,7 +163,7 @@ while True:
             pygame.time.set_timer(CROAK,0)
             frogger.sprite.lives = 5
             info.reset()
-    elif frogger.sprite.in_water:
+    elif not frogger.sprite.at_top and frogger.sprite.in_water:
         sprites = pygame.sprite.spritecollide(frogger.sprite,logs,collided=pygame.sprite.collide_mask,dokill=False)
 
         
@@ -175,6 +180,26 @@ while True:
             info.decrement_life()
             frogger.sprite.reset()
             frogger.sprite.lives -= 1
+    elif frogger.sprite.at_top:
+        frogger_win,location = frogger.sprite.is_touching_lily_pad()
+
+        if frogger_win:
+            locations.append(location)
+            print('win')
+            score += 1
+            print(score)
+        else:
+            print('lose')
+            info.decrement_life()
+            frogger.sprite.lives -= 1
+
+
+        frogger.sprite.reset()
+    else:
+        frogger.sprite.on_log = False
+
+
+
 
 
 
@@ -186,6 +211,8 @@ while True:
     logs.draw(screen)
     frogger.draw(screen)
     info.draw_lives(screen)
+    for x,y in locations:
+        screen.blit(frog_image,(x,y))
 
     pygame.display.update()
     clock.tick(FPS)

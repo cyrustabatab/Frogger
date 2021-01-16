@@ -29,6 +29,7 @@ def get_frog_images():
 
 
 
+ranges = {(67,103): (86,25),(184,220): (203,30),(303,337): (322,29),(419,453): (436,31),(534,570): (553,28)}
 
 class Frog(pygame.sprite.Sprite):
 
@@ -60,7 +61,13 @@ class Frog(pygame.sprite.Sprite):
         self.on_log = False
         self.x_speed = None #will have x_speed if on log
     
+    
+    def is_touching_lily_pad(self):
+        for (start,end),center in ranges.items():
+            if self.rect.left >= start and self.rect.right <= end:
+                return True,center
 
+        return False,None
     def place_on_log(self,log):
         self.on_log=True
         self.x_speed = log.speed * log.direction
@@ -73,6 +80,7 @@ class Frog(pygame.sprite.Sprite):
         self.image = self.up_images[0]
         self.rect = self.image.get_rect(center=self.rect.center)
         self.on_log = False
+        self.x_speed = None
     
 
     @property
@@ -80,6 +88,21 @@ class Frog(pygame.sprite.Sprite):
         
         top,bottom = 45,297
         return self.rect.bottom <= bottom and self.rect.top >= top
+
+    
+    @property
+    def at_top(self):
+        top = 43
+        
+
+        
+
+
+
+
+        return self.rect.top <= top
+
+
 
 
 

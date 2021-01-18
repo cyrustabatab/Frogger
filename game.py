@@ -63,7 +63,8 @@ logs = pygame.sprite.Group()
 
 
 def game_over_screen():
-    game_over_image = pygame.image.load(os.path.join('assets','game_over.jpg')).convert()
+    game_over_image = pygame.image.load(os.path.join('assets','gameover2.png')).convert()
+    game_over_image = pygame.transform.scale(game_over_image,(screen_width,screen_height))
 
     while True:
 

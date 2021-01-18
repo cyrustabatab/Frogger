@@ -9,14 +9,16 @@ pygame.init()
 screen_width = screen_height = 640
 screen = pygame.display.set_mode((screen_width,screen_height))
 clock = pygame.time.Clock()
+
+font = pygame.font.SysFont("comicsansms",42)
 FPS = 60
+BLACK = (0,0,0)
 
 from frog import Frog
 from car import Car
 from info import Info
 from log import Log
 from log import Gator
-
 
 pygame.display.set_caption("FROGGER")
 
@@ -39,9 +41,11 @@ TRILL = pygame.USEREVENT + 3
 pygame.time.set_timer(TRILL,5000)
 pygame.time.set_timer(CROAK,3000)
 
+
 possible_gaps = (2.5,3,3.5,4)
 log_gaps =(1,2,3) #(4,5,6)
 lane_times = [[time.time(),0] for _ in range(10)]
+amount_to_win = 5
 info = Info(screen_width,screen_height)
 
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
@@ -49,17 +53,15 @@ splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
 trill_sound = pygame.mixer.Sound(os.path.join('assets','trill.wav'))
 
 frog_image= pygame.image.load(os.path.join('assets','down_still.png'))
+win_text = None
 
 
 logs = pygame.sprite.Group()
 
 
 
-
 def game_over_screen():
     game_over_image = pygame.image.load(os.path.join('assets','game_over.jpg')).convert()
-
-
 
     while True:
 
@@ -82,19 +84,24 @@ def game_over_screen():
 
 
 
-def reset():
-    splat_sound.play()
-    info.decrement_life()
+def reset(lose=True):
+
+    if lose:
+        splat_sound.play()
+        info.decrement_life()
+        frogger.sprite.lives -= 1
+        if frogger.sprite.lives == 0:
+            game_over_screen()
+            pygame.time.set_timer(CROAK,0)
+            frogger.sprite.lives = 5
+            info.reset()
     frogger.sprite.reset()
-    frogger.sprite.lives -= 1
-    if frogger.sprite.lives == 0:
-        game_over_screen()
-        pygame.time.set_timer(CROAK,0)
-        frogger.sprite.lives = 5
-        info.reset()
 
 
 score = 0
+score_right_gap = 5
+score_top_gap = 0
+score_text =font.render(str(score),True,BLACK)
 locations = []
 while True:
     
@@ -164,7 +171,15 @@ while True:
             frogger.sprite.lives = 5
             info.reset()
     elif not frogger.sprite.at_top and frogger.sprite.in_water:
+
+        if frogger.sprite.out_of_bounds:
+            reset()
+
         sprites = pygame.sprite.spritecollide(frogger.sprite,logs,collided=pygame.sprite.collide_mask,dokill=False)
+
+        
+        
+
 
         
         if sprites:
@@ -177,32 +192,30 @@ while True:
 
 
         else:
-            info.decrement_life()
-            frogger.sprite.reset()
-            frogger.sprite.lives -= 1
+            reset()
     elif frogger.sprite.at_top:
         frogger_win,location = frogger.sprite.is_touching_lily_pad()
 
         if frogger_win:
-            locations.append(location)
+            locations.append(frog_image.get_rect(center=location))
             print('win')
             score += 1
+            score_text = font.render(str(score),True,BLACK)
+            if score == amount_to_win:
+                win_text = font.render("YOU WIN!",True,BLACK)
+
+
             print(score)
+            reset(lose=False)
         else:
             print('lose')
             info.decrement_life()
             frogger.sprite.lives -= 1
+            reset()
+        
 
-
-        frogger.sprite.reset()
     else:
         frogger.sprite.on_log = False
-
-
-
-
-
-
 
 
 
@@ -211,9 +224,12 @@ while True:
     logs.draw(screen)
     frogger.draw(screen)
     info.draw_lives(screen)
-    for x,y in locations:
-        screen.blit(frog_image,(x,y))
-
+    for frog_rect in locations:
+        #frog_image_rect = frog_image.get_rect(center=(x,y))
+        screen.blit(frog_image,frog_rect)
+    screen.blit(score_text,(screen_width - score_right_gap - score_text.get_width(),score_top_gap - 10))
+    if win_text:
+        screen.blit(win_text,(screen_width//2 - win_text.get_width()//2,screen_height//2 - win_text.get_height()//2))
     pygame.display.update()
     clock.tick(FPS)
 

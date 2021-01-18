@@ -61,6 +61,11 @@ class Frog(pygame.sprite.Sprite):
         self.on_log = False
         self.x_speed = None #will have x_speed if on log
     
+
+    @property
+    def out_of_bounds(self):
+        return self.rect.right <= 0 or self.rect.left >= self.screen_width
+
     
     def is_touching_lily_pad(self):
         for (start,end),center in ranges.items():

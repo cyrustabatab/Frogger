@@ -45,7 +45,7 @@ pygame.time.set_timer(CROAK,3000)
 
 
 possible_gaps = (2.5,3,3.5,4)
-log_gaps =(1,2,3) #(4,5,6)
+log_gaps =(2,3,4) #(4,5,6)
 lane_times = [[time.time(),0] for _ in range(10)]
 amount_to_win = 5
 info = Info(screen_width,screen_height)
@@ -53,6 +53,7 @@ info = Info(screen_width,screen_height)
 croak_sound = pygame.mixer.Sound(os.path.join('assets','croak.wav'))
 splat_sound = pygame.mixer.Sound(os.path.join('assets','splat.wav'))
 trill_sound = pygame.mixer.Sound(os.path.join('assets','trill.wav'))
+splash_sound = pygame.mixer.Sound(os.path.join('assets','plunk.wav'))
 
 frog_image= pygame.image.load(os.path.join('assets','down_still.png'))
 
@@ -85,10 +86,13 @@ def game_over_screen():
 
 
 
-def reset(lose=True):
+def reset(lose=True,splat=True):
 
     if lose:
-        splat_sound.play()
+        if splat:
+            splat_sound.play()
+        else:
+            splash_sound.play()
         info.decrement_life()
         frogger.sprite.lives -= 1
         if frogger.sprite.lives == 0:
@@ -198,7 +202,7 @@ def main():
 
 
             else:
-                reset()
+                reset(splat=False)
         elif frogger.sprite.at_top:
             frogger_win,location = frogger.sprite.is_touching_lily_pad()
 
@@ -242,7 +246,10 @@ def main():
 def menu():
     
     top_gap = 40
-    background_image = pygame.image.load(os.path.join('assets','frogger2.jpg'))
+    bottom_gap = 50
+    pygame.mixer.music.load(os.path.join('assets','frogger-music.mp3'))
+    pygame.mixer.music.play()
+    background_image = pygame.image.load(os.path.join('assets','frogger3.jpg'))
     background_image = pygame.transform.scale(background_image,(screen_width,screen_height))
     title_font = pygame.font.SysFont("comicsansms",80)
     sub_font = pygame.font.SysFont("comicsansms",40)
@@ -256,6 +263,7 @@ def menu():
                 sys.exit()
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_RETURN:
+                    pygame.mixer.music.stop()
                     main()
 
         
@@ -263,7 +271,7 @@ def menu():
 
         screen.blit(background_image,(0,0))
         screen.blit(title_text,(screen_width//2 - title_text.get_width()//2,top_gap))
-        screen.blit(sub_text,(screen_width//2 - sub_text.get_width()//2,top_gap + title_text.get_height() + 20))
+        screen.blit(sub_text,(screen_width//2 - sub_text.get_width()//2,screen_height - 50 - sub_text.get_height()))
 
         pygame.display.update()
 
